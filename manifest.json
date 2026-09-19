@@ -1,14 +1,14 @@
 {
   "name": "ScanSetu - Crypto to INR",
   "short_name": "ScanSetu",
-  "description": "Real-time Crypto to INR instant settlement gateway with zero KYC under 5,000.",
-  "start_url": "./?mode=pwa",
+  "description": "Real-time Crypto to INR instant settlement",
+  "start_url": "index.html?mode=pwa",
   "scope": "./",
-  "display": "fullscreen",
-  "display_override": ["fullscreen", "standalone"],
+  "display": "standalone",
+  "display_override": ["fullscreen", "standalone", "window-controls-overlay"],
   "orientation": "portrait",
   "background_color": "#111315",
-  "theme_color": "#131314",
+  "theme_color": "#111315",
   "icons": [
     {
       "src": "https://scansetu.co/assets/logo-icon-CcFvR6-7.png",
