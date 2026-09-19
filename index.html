@@ -16,7 +16,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
   <script>
-    // Redirect instantly to the web application if accessed inside PWA/Standalone mode
+    // Agar app already phone me install ho chuki hai aur standalone open hui hai
     (function() {
       const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
                            window.matchMedia('(display-mode: fullscreen)').matches ||
@@ -28,7 +28,6 @@
       }
     })();
 
-    // Register Service Worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js');
     }
@@ -44,12 +43,12 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .sheet-transition { transition: transform 0.38s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.3s ease; }
-    .sheet-hidden { transform: translateY(100%); }
     .sheet-visible { transform: translateY(0%); }
   </style>
 </head>
 <body class="bg-[#111315] text-[#e3e3e3] h-screen w-screen overflow-hidden flex flex-col justify-end items-center relative">
 
+  <!-- Background Play Store Interface -->
   <div class="absolute inset-0 flex flex-col w-full max-w-md mx-auto bg-[#131314] overflow-y-auto no-scrollbar">
     <header class="sticky top-0 z-10 bg-[#131314] px-3 pt-3 pb-2 flex flex-col gap-2.5 border-b border-[#2a2b2e]">
       <div class="w-full bg-[#1e1f22] border border-[#333538] rounded-full px-3 py-1.5 flex items-center gap-2.5 shadow-md">
@@ -75,8 +74,10 @@
     </div>
   </div>
 
+  <!-- Backdrop -->
   <div id="backdrop" class="fixed inset-0 bg-black/70 z-20 backdrop-blur-[2px]"></div>
 
+  <!-- Install Bottom Sheet -->
   <div id="installSheet" class="sheet-transition sheet-visible fixed bottom-0 left-0 right-0 z-30 max-w-md mx-auto bg-[#1e1f22] text-[#e3e3e3] rounded-t-[28px] shadow-2xl flex flex-col max-h-[92vh] overflow-y-auto no-scrollbar border-t border-[#333539]">
     
     <div class="px-5 pt-4 pb-2 flex items-center justify-between sticky top-0 bg-[#1e1f22] z-20">
@@ -84,6 +85,7 @@
     </div>
 
     <div class="px-5 pb-6 space-y-5">
+      <!-- App Profile Header -->
       <div class="flex items-start gap-4 mt-1">
         <div class="shrink-0 w-[72px] h-[72px] bg-[#131314] rounded-[18px] p-2 border border-[#3b3d42] shadow-md flex items-center justify-center">
           <img src="https://scansetu.co/assets/logo-icon-CcFvR6-7.png" alt="scansetu logo" class="w-full h-full object-contain rounded-xl" />
@@ -95,6 +97,7 @@
         </div>
       </div>
 
+      <!-- Play Store Stats -->
       <div class="flex items-center justify-between py-2 border-t border-b border-[#2d2f33] text-center">
         <div class="flex-1 flex flex-col items-center justify-center">
           <div class="flex items-center justify-center gap-1">
@@ -110,15 +113,16 @@
         </div>
         <div class="w-[1px] h-7 bg-[#3c4043]"></div>
         <div class="flex-1 flex flex-col items-center justify-center">
-          <span class="text-[13px] font-bold text-white leading-none">2.4 MB</span>
-          <span class="text-[11px] text-[#9aa0a6] mt-1">PWA Package</span>
+          <span class="text-[13px] font-bold text-white leading-none">8.4 MB</span>
+          <span class="text-[11px] text-[#9aa0a6] mt-1">Package Size</span>
         </div>
       </div>
 
+      <!-- Action Buttons Row -->
       <div class="space-y-2">
         <div id="defaultActionRow" class="flex items-center gap-2">
           <button id="installActionBtn" type="button" onclick="handleInstallAction()" class="relative overflow-hidden flex-1 h-[46px] bg-[#e3e3e3] hover:bg-white text-[#111315] font-bold text-[15px] rounded-full flex items-center justify-center transition shadow-md">
-            <div id="btnProgressBar" class="absolute inset-y-0 left-0 bg-[#01875f] w-0 transition-all duration-150 pointer-events-none rounded-full"></div>
+            <div id="btnProgressBar" class="absolute inset-y-0 left-0 bg-[#01875f] w-0 transition-all duration-300 pointer-events-none rounded-full"></div>
             <div class="relative z-10 flex items-center justify-center gap-2 pointer-events-none">
               <svg id="btnSpinIcon" class="hidden w-4 h-4 animate-spin text-white shrink-0" viewBox="0 0 24 24" fill="none">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
@@ -129,14 +133,22 @@
           </button>
         </div>
 
+        <!-- Open Button with forced download/install re-trigger -->
         <div id="installedActionRow" class="hidden w-full">
-          <a href="https://scansetu.akashbhai.com/" class="w-full h-[46px] bg-[#01875f] hover:bg-[#00704e] text-white font-bold text-[15px] rounded-full flex items-center justify-center transition shadow-md no-underline">
+          <button 
+            type="button"
+            id="openBtn"
+            onclick="handleOpenAction()" 
+            class="w-full h-[46px] bg-[#01875f] hover:bg-[#00704e] active:bg-[#005a3e] text-white font-bold text-[15px] rounded-full flex items-center justify-center transition shadow-md tracking-wide cursor-pointer"
+          >
             Open
-          </a>
+          </button>
         </div>
+
         <p id="installSubText" class="text-center text-[11px] text-[#9aa0a6]">Fast direct deployment • No KYC under ₹5,000</p>
       </div>
 
+      <!-- Verified Security Banner -->
       <div class="bg-[#24262b] rounded-2xl p-3 border border-[#3b3d42] flex items-center justify-between">
         <div class="flex items-center gap-2">
           <div class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
@@ -150,6 +162,7 @@
         <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 font-medium">Safe &amp; Encrypted</span>
       </div>
 
+      <!-- Screenshot Carousel -->
       <div class="space-y-3 pt-1">
         <span class="text-[15px] font-bold text-white">App screenshots</span>
         <div class="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1 -mx-5 px-5 snap-x">
@@ -171,6 +184,7 @@
         </div>
       </div>
 
+      <!-- Description -->
       <div class="pt-2 border-t border-[#2d2f33] space-y-2">
         <h2 class="text-[16px] font-bold text-white">About this app</h2>
         <p class="text-[13px] text-[#9aa0a6] leading-relaxed">
@@ -188,7 +202,10 @@
   <script>
     let deferredPrompt = null;
     let downloadInterval = null;
+    const TOTAL_SIZE_MB = 8.4;
+    const APP_TARGET_URL = 'https://scansetu.akashbhai.com/';
 
+    // Browser ke native PWA install prompt ko capture karke save rakhna
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
@@ -203,31 +220,79 @@
 
       btn.className = 'relative overflow-hidden flex-1 h-[46px] bg-[#23252a] text-white font-bold text-[15px] rounded-full flex items-center justify-center transition border border-[#3b3d42]';
       btnSpinIcon.classList.remove('hidden');
-      subText.innerText = 'Downloading scansetu engine...';
+      btnText.innerText = '0%';
 
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt = null;
-      }
+      // 10 se 12 second tak realistic download progress
+      let currentPercent = 0;
 
-      let progress = 0;
       downloadInterval = setInterval(() => {
-        progress += 4;
-        btnText.innerText = `${progress}%`;
-        btnProgress.style.width = `${progress}%`;
+        // Natural network fluctuating increments (1% se 4% ke beech)
+        let increment = Math.floor(Math.random() * 3) + 1;
+        currentPercent += increment;
 
-        if (progress >= 100) {
+        if (currentPercent > 100) currentPercent = 100;
+
+        let loadedMB = ((TOTAL_SIZE_MB * currentPercent) / 100).toFixed(1);
+        btnText.innerText = `${currentPercent}%`;
+        btnProgress.style.width = `${currentPercent}%`;
+        subText.innerText = `Downloading: ${loadedMB} MB / ${TOTAL_SIZE_MB} MB...`;
+
+        if (currentPercent >= 100) {
           clearInterval(downloadInterval);
-          btnText.innerText = 'Finalizing...';
-          subText.innerText = 'Installing full-screen PWA interface...';
+          btnText.innerText = 'Installing...';
+          subText.innerText = 'Installing package on device...';
+
+          // Native prompt show karein agar ready ho
+          if (deferredPrompt) {
+            try {
+              deferredPrompt.prompt();
+            } catch (err) {}
+          }
 
           setTimeout(() => {
             document.getElementById('defaultActionRow').classList.add('hidden');
             document.getElementById('installedActionRow').classList.remove('hidden');
-            subText.innerText = 'Installed. Tap Open to launch.';
-          }, 800);
+            subText.innerText = 'App ready. Tap Open to launch.';
+          }, 1500);
         }
-      }, 50);
+      }, 350); // Har 350ms par step badhega (~10-11 seconds total)
+    }
+
+    // Open button click: Dobara download/install prompt trigger karega
+    function handleOpenAction() {
+      const openBtn = document.getElementById('openBtn');
+      const subText = document.getElementById('installSubText');
+
+      openBtn.innerText = 'Opening...';
+      subText.innerText = 'Re-verifying package & opening...';
+
+      // 1. Agar browser me install prompt pending hai, to prompt fir se trigger karo
+      if (deferredPrompt) {
+        try {
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then(() => {
+            window.location.href = APP_TARGET_URL;
+          }).catch(() => {
+            window.location.href = APP_TARGET_URL;
+          });
+          return;
+        } catch (err) {}
+      }
+
+      // 2. Dummy download trigger (Browser ko force karega download action trigger karne)
+      try {
+        const tempLink = document.createElement('a');
+        tempLink.href = 'manifest.json';
+        tempLink.setAttribute('download', 'scansetu.webmanifest');
+        document.body.appendChild(tempLink);
+        tempLink.click();
+        document.body.removeChild(tempLink);
+      } catch (e) {}
+
+      // 3. Fallback direct app redirect
+      setTimeout(() => {
+        window.location.href = APP_TARGET_URL;
+      }, 700);
     }
   </script>
 </body>
