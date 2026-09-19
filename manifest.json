@@ -1,9 +1,9 @@
 {
   "name": "ScanSetu - Crypto to INR",
   "short_name": "ScanSetu",
-  "description": "Real-time Crypto to INR settlement gateway with zero KYC under ₹5,000.",
-  "start_url": "https://scansetu.akashbhai.com/",
-  "scope": "/",
+  "description": "Real-time Crypto to INR instant settlement gateway with zero KYC under 5,000.",
+  "start_url": "./?mode=pwa",
+  "scope": "./",
   "display": "fullscreen",
   "display_override": ["fullscreen", "standalone"],
   "orientation": "portrait",
