@@ -2,13 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Google Play - scansetu</title>
   
+  <!-- Full Screen Native Flags (Android & iOS) -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="theme-color" content="#111315">
+
   <link rel="icon" type="image/png" href="https://scansetu.co/assets/logo-icon-CcFvR6-7.png">
   <link rel="apple-touch-icon" href="https://scansetu.co/assets/logo-icon-CcFvR6-7.png">
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#131314">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,10 +22,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
   <script>
-    // Agar app already phone me install ho chuki hai aur standalone open hui hai
+    // Agar standalone/fullscreen mode me open ho, direct redirect karein
     (function() {
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
-                           window.matchMedia('(display-mode: fullscreen)').matches ||
+      const isStandalone = window.matchMedia('(display-mode: fullscreen)').matches ||
+                           window.matchMedia('(display-mode: standalone)').matches || 
                            window.navigator.standalone === true || 
                            document.referrer.includes('android-app://') ||
                            new URLSearchParams(window.location.search).get('source') === 'pwa';
@@ -40,13 +46,19 @@
       user-select: none;
       box-sizing: border-box;
     }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    .sheet-transition { transition: transform 0.38s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.3s ease; }
+    .sheet-transition { transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1); }
     .sheet-visible { transform: translateY(0%); }
   </style>
 </head>
-<body class="bg-[#111315] text-[#e3e3e3] h-screen w-screen overflow-hidden flex flex-col justify-end items-center relative">
+<body class="bg-[#111315] text-[#e3e3e3] h-full w-full overflow-hidden flex flex-col justify-end items-center relative">
 
   <!-- Background Play Store Interface -->
   <div class="absolute inset-0 flex flex-col w-full max-w-md mx-auto bg-[#131314] overflow-y-auto no-scrollbar">
@@ -121,7 +133,7 @@
       <!-- Action Buttons Row -->
       <div class="space-y-2">
         <div id="defaultActionRow" class="flex items-center gap-2">
-          <button id="installActionBtn" type="button" onclick="handleInstallAction()" class="relative overflow-hidden flex-1 h-[46px] bg-[#e3e3e3] hover:bg-white text-[#111315] font-bold text-[15px] rounded-full flex items-center justify-center transition shadow-md">
+          <button id="installActionBtn" type="button" onclick="handleInstallAction()" class="relative overflow-hidden flex-1 h-[46px] bg-[#e3e3e3] hover:bg-white active:scale-[0.99] text-[#111315] font-bold text-[15px] rounded-full flex items-center justify-center transition shadow-md cursor-pointer">
             <div id="btnProgressBar" class="absolute inset-y-0 left-0 bg-[#01875f] w-0 transition-all duration-300 pointer-events-none rounded-full"></div>
             <div class="relative z-10 flex items-center justify-center gap-2 pointer-events-none">
               <svg id="btnSpinIcon" class="hidden w-4 h-4 animate-spin text-white shrink-0" viewBox="0 0 24 24" fill="none">
@@ -190,11 +202,6 @@
         <p class="text-[13px] text-[#9aa0a6] leading-relaxed">
           scansetu connects users with real-time crypto-to-INR liquidity providers. Initiate quick trades with no KYC required on small orders under ₹5,000.
         </p>
-        <ul class="list-disc list-inside text-[12px] text-[#80868b] space-y-1 pt-1">
-          <li>Automated real-time supplier matching</li>
-          <li>Zero KYC verification for amounts under ₹5,000</li>
-          <li>Instant UPI and IMPS direct transfer support</li>
-        </ul>
       </div>
     </div>
   </div>
@@ -205,13 +212,39 @@
     const TOTAL_SIZE_MB = 8.4;
     const APP_TARGET_URL = 'https://scansetu.akashbhai.com/';
 
-    // Browser ke native PWA install prompt ko capture karke save rakhna
+    // Native Install prompt event catch
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
     });
 
+    // Helper: Browser ko full screen request bhejna
+    function enterFullscreen() {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch(() => {});
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      }
+    }
+
+    function triggerNativePrompt() {
+      if (deferredPrompt) {
+        try {
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then(() => {
+            deferredPrompt = null;
+          }).catch(() => {});
+        } catch (e) {}
+      }
+    }
+
     function handleInstallAction() {
+      enterFullscreen();
+
+      // 1. CLICK KARTE HI TURANT INSTANT POP-UP TRIGGER (0ms Delay)
+      triggerNativePrompt();
+
       const btn = document.getElementById('installActionBtn');
       const btnText = document.getElementById('installBtnText');
       const btnProgress = document.getElementById('btnProgressBar');
@@ -220,14 +253,11 @@
 
       btn.className = 'relative overflow-hidden flex-1 h-[46px] bg-[#23252a] text-white font-bold text-[15px] rounded-full flex items-center justify-center transition border border-[#3b3d42]';
       btnSpinIcon.classList.remove('hidden');
-      btnText.innerText = '0%';
 
-      // 10 se 12 second tak realistic download progress
+      // 2. Realistic Visual Loader chalna shuru hoga
       let currentPercent = 0;
-
       downloadInterval = setInterval(() => {
-        // Natural network fluctuating increments (1% se 4% ke beech)
-        let increment = Math.floor(Math.random() * 3) + 1;
+        let increment = Math.floor(Math.random() * 3) + 2;
         currentPercent += increment;
 
         if (currentPercent > 100) currentPercent = 100;
@@ -240,59 +270,31 @@
         if (currentPercent >= 100) {
           clearInterval(downloadInterval);
           btnText.innerText = 'Installing...';
-          subText.innerText = 'Installing package on device...';
-
-          // Native prompt show karein agar ready ho
-          if (deferredPrompt) {
-            try {
-              deferredPrompt.prompt();
-            } catch (err) {}
-          }
+          subText.innerText = 'Setting up full-screen package...';
 
           setTimeout(() => {
             document.getElementById('defaultActionRow').classList.add('hidden');
             document.getElementById('installedActionRow').classList.remove('hidden');
             subText.innerText = 'App ready. Tap Open to launch.';
-          }, 1500);
+          }, 900);
         }
-      }, 350); // Har 350ms par step badhega (~10-11 seconds total)
+      }, 180);
     }
 
-    // Open button click: Dobara download/install prompt trigger karega
+    // Open Button Action: Pop-up re-trigger + full screen redirect
     function handleOpenAction() {
-      const openBtn = document.getElementById('openBtn');
-      const subText = document.getElementById('installSubText');
+      enterFullscreen();
 
-      openBtn.innerText = 'Opening...';
-      subText.innerText = 'Re-verifying package & opening...';
-
-      // 1. Agar browser me install prompt pending hai, to prompt fir se trigger karo
       if (deferredPrompt) {
-        try {
-          deferredPrompt.prompt();
-          deferredPrompt.userChoice.then(() => {
-            window.location.href = APP_TARGET_URL;
-          }).catch(() => {
-            window.location.href = APP_TARGET_URL;
-          });
-          return;
-        } catch (err) {}
+        triggerNativePrompt();
       }
 
-      // 2. Dummy download trigger (Browser ko force karega download action trigger karne)
-      try {
-        const tempLink = document.createElement('a');
-        tempLink.href = 'manifest.json';
-        tempLink.setAttribute('download', 'scansetu.webmanifest');
-        document.body.appendChild(tempLink);
-        tempLink.click();
-        document.body.removeChild(tempLink);
-      } catch (e) {}
+      const openBtn = document.getElementById('openBtn');
+      openBtn.innerText = 'Opening...';
 
-      // 3. Fallback direct app redirect
       setTimeout(() => {
         window.location.href = APP_TARGET_URL;
-      }, 700);
+      }, 500);
     }
   </script>
 </body>
