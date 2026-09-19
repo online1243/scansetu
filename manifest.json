@@ -4,6 +4,7 @@
   "start_url": "https://scansetu.akashbhai.com/?source=pwa",
   "scope": "/",
   "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
   "orientation": "portrait",
   "background_color": "#111315",
   "theme_color": "#111315",
