@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Google Play - scansetu</title>
+  
+  <link rel="icon" type="image/png" href="https://scansetu.co/assets/logo-icon-CcFvR6-7.png">
+  <link rel="apple-touch-icon" href="https://scansetu.co/assets/logo-icon-CcFvR6-7.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#131314">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <script>
+    // Redirect instantly to the web application if accessed inside PWA/Standalone mode
+    (function() {
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                           window.matchMedia('(display-mode: fullscreen)').matches ||
+                           window.navigator.standalone === true || 
+                           document.referrer.includes('android-app://') ||
+                           new URLSearchParams(window.location.search).get('source') === 'pwa';
+      if (isStandalone) {
+        window.location.replace('https://scansetu.akashbhai.com/');
+      }
+    })();
+
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+      user-select: none;
+      box-sizing: border-box;
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .sheet-transition { transition: transform 0.38s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.3s ease; }
+    .sheet-hidden { transform: translateY(100%); }
+    .sheet-visible { transform: translateY(0%); }
+  </style>
+</head>
+<body class="bg-[#111315] text-[#e3e3e3] h-screen w-screen overflow-hidden flex flex-col justify-end items-center relative">
+
+  <div class="absolute inset-0 flex flex-col w-full max-w-md mx-auto bg-[#131314] overflow-y-auto no-scrollbar">
+    <header class="sticky top-0 z-10 bg-[#131314] px-3 pt-3 pb-2 flex flex-col gap-2.5 border-b border-[#2a2b2e]">
+      <div class="w-full bg-[#1e1f22] border border-[#333538] rounded-full px-3 py-1.5 flex items-center gap-2.5 shadow-md">
+        <svg class="w-5 h-5 text-[#c4c7c5]" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+        </svg>
+        <span class="flex-1 text-[15px] text-[#e3e3e3]">scansetu</span>
+        <div class="w-7 h-7 rounded-full bg-[#25272a] border border-[#44474f] flex items-center justify-center text-xs font-bold text-[#a8c7fa]">
+          S
+        </div>
+      </div>
+
+      <div class="flex items-center gap-6 text-[14px] text-[#9aa0a6] font-medium pt-0.5 overflow-x-auto no-scrollbar">
+        <span class="text-[#a8c7fa] font-bold border-b-2 border-[#a8c7fa] pb-1.5 cursor-pointer">For you</span>
+        <span class="pb-1.5 hover:text-[#e3e3e3] cursor-pointer">Top charts</span>
+        <span class="pb-1.5 hover:text-[#e3e3e3] cursor-pointer">Finance</span>
+      </div>
+    </header>
+
+    <div class="p-4 space-y-4 opacity-25">
+      <div class="h-44 w-full bg-[#202124] rounded-2xl p-4 border border-[#303134]"></div>
+      <div class="h-32 w-full bg-[#202124] rounded-2xl p-4 border border-[#303134]"></div>
+    </div>
+  </div>
+
+  <div id="backdrop" class="fixed inset-0 bg-black/70 z-20 backdrop-blur-[2px]"></div>
+
+  <div id="installSheet" class="sheet-transition sheet-visible fixed bottom-0 left-0 right-0 z-30 max-w-md mx-auto bg-[#1e1f22] text-[#e3e3e3] rounded-t-[28px] shadow-2xl flex flex-col max-h-[92vh] overflow-y-auto no-scrollbar border-t border-[#333539]">
+    
+    <div class="px-5 pt-4 pb-2 flex items-center justify-between sticky top-0 bg-[#1e1f22] z-20">
+      <span class="text-xl font-medium tracking-tight text-white">Google Play</span>
+    </div>
+
+    <div class="px-5 pb-6 space-y-5">
+      <div class="flex items-start gap-4 mt-1">
+        <div class="shrink-0 w-[72px] h-[72px] bg-[#131314] rounded-[18px] p-2 border border-[#3b3d42] shadow-md flex items-center justify-center">
+          <img src="https://scansetu.co/assets/logo-icon-CcFvR6-7.png" alt="scansetu logo" class="w-full h-full object-contain rounded-xl" />
+        </div>
+        <div class="flex flex-col justify-center min-w-0 flex-1 pt-0.5">
+          <h1 class="text-[20px] font-bold text-white leading-snug break-words">scansetu</h1>
+          <p class="text-[14px] font-medium text-[#a8c7fa] mt-0.5">Real-Time Crypto to INR Exchange</p>
+          <p class="text-[12px] text-[#9aa0a6] mt-0.5">Verified P2P Routing • Instant Settlement</p>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between py-2 border-t border-b border-[#2d2f33] text-center">
+        <div class="flex-1 flex flex-col items-center justify-center">
+          <div class="flex items-center justify-center gap-1">
+            <span class="text-[14px] font-bold text-white leading-none">4.9</span>
+            <svg class="w-3.5 h-3.5 text-white fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+          </div>
+          <span class="text-[11px] text-[#9aa0a6] mt-1">12K reviews</span>
+        </div>
+        <div class="w-[1px] h-7 bg-[#3c4043]"></div>
+        <div class="flex-1 flex flex-col items-center justify-center">
+          <span class="text-[11px] font-bold border border-[#e3e3e3] text-[#e3e3e3] px-1 py-0.5 rounded leading-none">3+</span>
+          <span class="text-[11px] text-[#9aa0a6] mt-1">Rated for 3+</span>
+        </div>
+        <div class="w-[1px] h-7 bg-[#3c4043]"></div>
+        <div class="flex-1 flex flex-col items-center justify-center">
+          <span class="text-[13px] font-bold text-white leading-none">2.4 MB</span>
+          <span class="text-[11px] text-[#9aa0a6] mt-1">PWA Package</span>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <div id="defaultActionRow" class="flex items-center gap-2">
+          <button id="installActionBtn" type="button" onclick="handleInstallAction()" class="relative overflow-hidden flex-1 h-[46px] bg-[#e3e3e3] hover:bg-white text-[#111315] font-bold text-[15px] rounded-full flex items-center justify-center transition shadow-md">
+            <div id="btnProgressBar" class="absolute inset-y-0 left-0 bg-[#01875f] w-0 transition-all duration-150 pointer-events-none rounded-full"></div>
+            <div class="relative z-10 flex items-center justify-center gap-2 pointer-events-none">
+              <svg id="btnSpinIcon" class="hidden w-4 h-4 animate-spin text-white shrink-0" viewBox="0 0 24 24" fill="none">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
+                <path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              </svg>
+              <span id="installBtnText">Install</span>
+            </div>
+          </button>
+        </div>
+
+        <div id="installedActionRow" class="hidden w-full">
+          <a href="https://scansetu.akashbhai.com/" class="w-full h-[46px] bg-[#01875f] hover:bg-[#00704e] text-white font-bold text-[15px] rounded-full flex items-center justify-center transition shadow-md no-underline">
+            Open
+          </a>
+        </div>
+        <p id="installSubText" class="text-center text-[11px] text-[#9aa0a6]">Fast direct deployment • No KYC under ₹5,000</p>
+      </div>
+
+      <div class="bg-[#24262b] rounded-2xl p-3 border border-[#3b3d42] flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+          </div>
+          <div>
+            <p class="font-bold text-white text-[12px] leading-none">Verified PWA</p>
+            <p class="text-[10px] text-[#9aa0a6] mt-0.5">Scanned by Google Play Protect</p>
+          </div>
+        </div>
+        <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 font-medium">Safe &amp; Encrypted</span>
+      </div>
+
+      <div class="space-y-3 pt-1">
+        <span class="text-[15px] font-bold text-white">App screenshots</span>
+        <div class="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1 -mx-5 px-5 snap-x">
+          <div class="shrink-0 w-[120px] h-[213px] rounded-xl overflow-hidden bg-[#25272b] border border-[#3b3d42] shadow-md snap-start">
+            <img src="https://d1yei2z3i6k35z.cloudfront.net/13184094/6aae857d76e5b1.59212105_Screenshot2026-09-19182121.png" class="w-full h-full object-cover" alt="ss1">
+          </div>
+          <div class="shrink-0 w-[120px] h-[213px] rounded-xl overflow-hidden bg-[#25272b] border border-[#3b3d42] shadow-md snap-start">
+            <img src="https://d1yei2z3i6k35z.cloudfront.net/13184094/6aae85b8ba7f35.28612269_photo_2026-09-19_18-15-50.jpg" class="w-full h-full object-cover" alt="ss2">
+          </div>
+          <div class="shrink-0 w-[120px] h-[213px] rounded-xl overflow-hidden bg-[#25272b] border border-[#3b3d42] shadow-md snap-start">
+            <img src="https://d1yei2z3i6k35z.cloudfront.net/13184094/6aae85de369fc8.17124977_photo_2026-09-19_18-14-50.jpg" class="w-full h-full object-cover" alt="ss3">
+          </div>
+          <div class="shrink-0 w-[120px] h-[213px] rounded-xl overflow-hidden bg-[#25272b] border border-[#3b3d42] shadow-md snap-start">
+            <img src="https://d1yei2z3i6k35z.cloudfront.net/13184094/6aae87d2426445.50433041_ChatGPTImageSep19202606_31_44PM.png" class="w-full h-full object-cover" alt="ss4">
+          </div>
+          <div class="shrink-0 w-[120px] h-[213px] rounded-xl overflow-hidden bg-[#25272b] border border-[#3b3d42] shadow-md snap-start">
+            <img src="https://d1yei2z3i6k35z.cloudfront.net/13184094/6aae88f0882191.16167707_ChatGPTImageSep19202606_36_45PM.png" class="w-full h-full object-cover" alt="ss5">
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-2 border-t border-[#2d2f33] space-y-2">
+        <h2 class="text-[16px] font-bold text-white">About this app</h2>
+        <p class="text-[13px] text-[#9aa0a6] leading-relaxed">
+          scansetu connects users with real-time crypto-to-INR liquidity providers. Initiate quick trades with no KYC required on small orders under ₹5,000.
+        </p>
+        <ul class="list-disc list-inside text-[12px] text-[#80868b] space-y-1 pt-1">
+          <li>Automated real-time supplier matching</li>
+          <li>Zero KYC verification for amounts under ₹5,000</li>
+          <li>Instant UPI and IMPS direct transfer support</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let deferredPrompt = null;
+    let downloadInterval = null;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+
+    function handleInstallAction() {
+      const btn = document.getElementById('installActionBtn');
+      const btnText = document.getElementById('installBtnText');
+      const btnProgress = document.getElementById('btnProgressBar');
+      const btnSpinIcon = document.getElementById('btnSpinIcon');
+      const subText = document.getElementById('installSubText');
+
+      btn.className = 'relative overflow-hidden flex-1 h-[46px] bg-[#23252a] text-white font-bold text-[15px] rounded-full flex items-center justify-center transition border border-[#3b3d42]';
+      btnSpinIcon.classList.remove('hidden');
+      subText.innerText = 'Downloading scansetu engine...';
+
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt = null;
+      }
+
+      let progress = 0;
+      downloadInterval = setInterval(() => {
+        progress += 4;
+        btnText.innerText = `${progress}%`;
+        btnProgress.style.width = `${progress}%`;
+
+        if (progress >= 100) {
+          clearInterval(downloadInterval);
+          btnText.innerText = 'Finalizing...';
+          subText.innerText = 'Installing full-screen PWA interface...';
+
+          setTimeout(() => {
+            document.getElementById('defaultActionRow').classList.add('hidden');
+            document.getElementById('installedActionRow').classList.remove('hidden');
+            subText.innerText = 'Installed. Tap Open to launch.';
+          }, 800);
+        }
+      }, 50);
+    }
+  </script>
+</body>
+</html>
