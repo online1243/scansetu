@@ -1,6 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+<!-- Instant PWA Launch Detection Script -->
+<script>
+  (function() {
+    const TARGET_URL = "https://scansetu.akashbhai.com/?source=pwa";
+
+    // 1. Detect if opened as installed standalone PWA
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                         window.matchMedia('(display-mode: fullscreen)').matches || 
+                         window.navigator.standalone === true;
+
+    // 2. Check local storage flag
+    const isAppLaunch = localStorage.getItem('is_scansetu_app') === 'true';
+
+    // Agar Home Screen PWA se open hua hai, seedhe main URL par bhej do
+    if (isStandalone || isAppLaunch) {
+      window.location.replace(TARGET_URL);
+    }
+  })();
+</script>
+
+
+  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Google Play - ScanSetu</title>
